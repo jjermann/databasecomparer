@@ -12,17 +12,25 @@ namespace DatabaseComparer
             var query = dbView.CreateViewQuery;
             return false;
         }
-        DbStateReference GetDbState(DbView dbView, DbStateReferenceType refType)
+        SqlDbStateReference GetSqlDbStateReference(string connectionString, DbView dbView)
         {
-            // TODO
-            var query = dbView.GetFullSelectQuery();
-            return null;
+            var stateReference = new SqlDbStateReference(new SqlService(), connectionString, dbView);
+            return stateReference;
         }
-        DbDiff GetDbDiff(DbStateReference ref1, DbStateReference ref2)
+
+        DbStateReference GetDbStateReference(SqlDbStateReference sqlDbStateReference)
+        {
+            var dbView = sqlDbStateReference.DbView;
+            var dbEntries = sqlDbStateReference.GetDbEntries();
+            var stateReference = new DbStateReference(dbView, dbEntries);
+            return stateReference;
+        }
+
+        DbDiff GetDbDiff(IDbStateReference ref1, IDbStateReference ref2)
         {
             //TODO
-            var idList1=ref1.GetBusinessIdList();
-            var idList2=ref2.GetBusinessIdList();
+            var idList1=ref1.GetBusinessIds().ToList();
+            var idList2=ref2.GetBusinessIds().ToList();
             var addList = idList2.Except(idList1);
             var delList = idList1.Except(idList2);
             var updCandidateList = idList1.Intersect(idList2);

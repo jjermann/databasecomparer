@@ -10,6 +10,15 @@ namespace DatabaseComparer
         public List<string> BusinessIdColumnNameList {get;set;}
         public List<string> ColumnNameList {get;set;}
 
+        public string GetBusinessIdSelectQuery()
+        {
+            var businessIdColumnNameString = string.Join(", ", BusinessIdColumnNameList);
+            var sb = new StringBuilder();
+            sb.AppendLine($"SELECT {businessIdColumnNameString}");
+            sb.AppendLine($"FROM {ViewName}");
+            return sb.ToString();
+        }
+
         public string GetBasicSelectQuery()
         {
             var columnNameList = new List<string>();
