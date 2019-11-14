@@ -8,7 +8,8 @@ namespace DatabaseComparer
         public DbEntry DbEntryAfter {get;set;}
 
         public string ViewName => DbEntryBefore?.BusinessId?.ViewName ?? DbEntryAfter?.BusinessId?.ViewName;
-        public int BusinessIdHashCode => (DbEntryBefore?.BusinessId?.GetHashCode() ?? DbEntryAfter?.BusinessId?.GetHashCode()).Value;
+        public DbBusinessId BusinessId => DbEntryBefore?.BusinessId ?? DbEntryAfter?.BusinessId;
+        public int GetBusinessIdHashCode() => BusinessId?.GetHashCode() ?? 0;
         public DbDiffEntryType DiffEntryType 
         {
             get
@@ -32,27 +33,32 @@ namespace DatabaseComparer
             {
                 return viewNameCompare;
             }
-            // TODO
-            // if (BusinessIdHashCode != other.BusinessIdHashCode)
-            // {
-            //     for (var i=0; i<BusinessIdColumnList.Count; i++)
-            //     {
-            //         var businessIdColumnCompare = BusinessIdColumnList[i].Value.CompareTo(other.BusinessIdColumnList[i].Value);
-            //         if (businessIdColumnCompare != 0)
-            //         {
-            //             return businessIdColumnCompare;
-            //         }
-            //     }
-            //     throw new Exception("Inconsistency!");
-            // }
-            // for (var i=0; i<ColumnList.Count; i++)
-            // {
-            //     var columnCompare = ColumnList[i].Value.CompareTo(other.ColumnList[i].Value);
-            //     if (columnCompare != 0)
-            //     {
-            //         return columnCompare;
-            //     }
-            // }
+            var businessIdCompare = GetBusinessIdHashCode().CompareTo(other.GetBusinessIdHashCode());
+            if (businessIdCompare != 0)
+            {
+                return businessIdCompare;
+            }
+            var typeCompare = (int)DiffEntryType.CompareTo((int)other.DiffEntryType);
+            if (typeCompare != 0)
+            {
+                return typeCompare;
+            }
+            if (DbEntryBefore != null)
+            {
+                var beforeCompare = DbEntryBefore.CompareTo(other.DbEntryBefore);
+                if (beforeCompare != 0)
+                {
+                    return beforeCompare;
+                }
+            }
+            if (DbEntryAfter != null)
+            {
+                var afterCompare = DbEntryAfter.CompareTo(other.DbEntryAfter);
+                if (afterCompare != 0)
+                {
+                    return afterCompare;
+                }
+            }
             return 0;
         }
         public bool Equals(DbDiffEntry other)
@@ -60,7 +66,10 @@ namespace DatabaseComparer
             if (other == null) {
                 return false;
             }
-            // TODO: First check BusinessIdHashCode
+            if (BusinessId.GetHashCode() != other.BusinessId.GetHashCode())
+            {
+                return false;
+            }
             return GetHashCode().Equals(other.GetHashCode());
         }
         public override bool Equals(object other)
@@ -130,7 +139,21 @@ namespace DatabaseComparer
         public override string ToString()
         {
             var businessId = DbEntryBefore?.BusinessId ?? DbEntryAfter?.BusinessId;
-            var str = DiffEntryType + " " + businessId + " " + DbEntryBefore + "->";
+            var str = DiffEntryType + " " + businessId + " ";
+            if (DiffEntryType == DbDiffEntryType.Add)
+            {
+                str += string.Join(",", DbEntryAfter.ColumnList);
+            }
+            else if (DiffEntryType == DbDiffEntryType.Delete)
+            {
+                str += string.Join(",", DbEntryBefore.ColumnList);
+            }
+            else if (DiffEntryType == DbDiffEntryType.Update)
+            {
+                str += string.Join(",", DbEntryBefore.ColumnList);
+                str += " -> ";
+                str += string.Join(",", DbEntryAfter.ColumnList);
+            }
             return str;
         }
     }

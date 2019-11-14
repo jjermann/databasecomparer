@@ -81,7 +81,7 @@ namespace DatabaseComparerTests
         {
             return new DbView
             {
-                BusinessId = new DbBusinessId(TestDbViewName, "Id1", "Id2"),
+                BusinessNameId = new DbBusinessId(TestDbViewName, "Id1", "Id2"),
                 ColumnNameList = new List<string> { "Column1", "Column2", "Column3" },
                 CreateViewQuery = $"CREATE VIEW {TestDbViewName} AS SELECT Id1, Id2, Column1, Column2, Column3 FROM {TestDbTableName}"
             };

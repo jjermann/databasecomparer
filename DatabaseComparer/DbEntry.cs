@@ -106,5 +106,11 @@ namespace DatabaseComparer
                 ColumnList = ColumnList?.Select(p => p).ToList(),
             };
         }
+
+        public override string ToString()
+        {
+            var str = BusinessId + " " + string.Join(",", ColumnList);
+            return str;
+        }
     }
 }

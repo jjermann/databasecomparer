@@ -23,5 +23,11 @@ namespace DatabaseComparer
         {
             return DbEntryList;
         }
+
+        // public override string ToString()
+        // {
+        //     var dbStateStr = "DbState: " + string.Join(", ", GetDbEntries());
+        //     return dbStateStr;
+        // }
     }
 }

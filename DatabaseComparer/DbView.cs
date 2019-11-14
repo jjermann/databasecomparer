@@ -5,12 +5,12 @@ namespace DatabaseComparer
 {
     public class DbView
     {
-        public DbBusinessId BusinessId {get;set;}
+        public DbBusinessId BusinessNameId {get;set;}
         public string CreateViewQuery {get;set;}
         public List<string> ColumnNameList {get;set;}
 
-        public string ViewName => BusinessId.ViewName;
-        public List<string> BusinessIdColumnNameList => BusinessId.BusinessIdColumnList;
+        public string ViewName => BusinessNameId.ViewName;
+        public List<string> BusinessIdColumnNameList => BusinessNameId.BusinessIdColumnList;
 
         public string GetBusinessIdSelectQuery()
         {
@@ -40,6 +40,12 @@ namespace DatabaseComparer
             sb.AppendLine(GetBasicSelectQuery());
             sb.AppendLine($"ORDER BY {businessIdColumnNameString}");
             return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            var str = BusinessNameId + " " + string.Join(",", ColumnNameList);
+            return str;
         }
     }
 }
