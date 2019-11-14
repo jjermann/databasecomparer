@@ -12,21 +12,21 @@ namespace DatabaseComparer
             var query = dbView.CreateViewQuery;
             return false;
         }
-        SqlDbStateReference GetSqlDbStateReference(string connectionString, DbView dbView)
+        public SqlDbStateReference GetSqlDbStateReference(string connectionString, DbView dbView)
         {
             var stateReference = new SqlDbStateReference(new SqlService(), connectionString, dbView);
             return stateReference;
         }
 
-        DbStateReference GetDbStateReference(SqlDbStateReference sqlDbStateReference)
+        public DbState GetDbState(SqlDbStateReference sqlDbStateReference)
         {
             var dbView = sqlDbStateReference.DbView;
             var dbEntries = sqlDbStateReference.GetDbEntries();
-            var stateReference = new DbStateReference(dbView, dbEntries);
+            var stateReference = new DbState(dbView, dbEntries);
             return stateReference;
         }
 
-        DbDiff GetDbDiff(IDbStateReference ref1, IDbStateReference ref2)
+        public DbDiff GetDbDiff(IDbStateReference ref1, IDbStateReference ref2)
         {
             //TODO
             var idList1=ref1.GetBusinessIds().ToList();
@@ -37,7 +37,7 @@ namespace DatabaseComparer
             return null;
         }
         
-        DbDiff GetDbDiff(DbDiff diff1, DbDiff diff2)
+        public DbDiff GetDbDiff(DbDiff diff1, DbDiff diff2)
         {
             var add1Ids = diff1.DbDiffEntryList
                 .Where(e => e.DiffEntryType == DbDiffEntryType.Add)
@@ -182,7 +182,7 @@ namespace DatabaseComparer
 
             return dbDiff;
         }
-        DbDiff SquashDbDiffs(DbDiff[] diffArray) => null;
+        public DbDiff SquashDbDiffs(DbDiff[] diffArray) => null;
 
         private DbDiffEntry GetUpdateDifference(DbDiffEntry e1, DbDiffEntry e2)
         {
