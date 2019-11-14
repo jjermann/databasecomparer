@@ -26,27 +26,27 @@ namespace TestApp
             {
                 new DbEntry
                 {
-                    BusinessIdColumnList = new List<string> {"1"},
+                    BusinessId = new DbBusinessId("MetadataIdView", "1"),
                     ColumnList = new List<string> {"11111111", "1"}
                 },
                 new DbEntry
                 {
-                    BusinessIdColumnList = new List<string> {"2"},
+                    BusinessId = new DbBusinessId("MetadataIdView", "2"),
                     ColumnList = new List<string> {"11111111", "2"}
                 },
                 new DbEntry
                 {
-                    BusinessIdColumnList = new List<string> {"3"},
+                    BusinessId = new DbBusinessId("MetadataIdView", "3"),
                     ColumnList = new List<string> {"22222222", "1"}
                 }
             };
             var sqlService = new MockSqlService(dbEntryList);
-            // var sqlService = new SqlService();
+            //var sqlService = new SqlService();
             var connectionString = @"Data Source={host}\{instance}; Initial Catalog={dbName}; User ID={userId}; Password={password}";
             var stateEnumerable = sqlService.GetDbEntries(connectionString, dbView);
             foreach (var entry in stateEnumerable)
             {
-                Console.WriteLine(string.Join(",", entry.BusinessIdColumnList));
+                Console.WriteLine(string.Join(",", entry.BusinessId));
                 Console.WriteLine(string.Join(",", entry.ColumnList));
             }
         }

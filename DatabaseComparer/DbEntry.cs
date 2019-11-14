@@ -6,33 +6,19 @@ namespace DatabaseComparer
 {
     public class DbEntry : ICloneable, IEquatable<DbEntry>, IComparable<DbEntry>
     {
-        public string ViewName {get;set;}
-        public List<string> BusinessIdColumnList {get;set;}
+        public DbBusinessId BusinessId {get;set;}
         public List<string> ColumnList {get;set;}
-        public int BusinessIdHashCode => 0;
 
         public int CompareTo(DbEntry other)
         {
-            var viewNameCompare = ViewName.CompareTo(other.ViewName);
-            if (viewNameCompare != 0)
+            var businessIdCompare = BusinessId.CompareTo(other.BusinessId);
+            if (businessIdCompare != 0)
             {
-                return viewNameCompare;
-            }
-            if (BusinessIdHashCode != other.BusinessIdHashCode)
-            {
-                for (var i=0; i<BusinessIdColumnList.Count; i++)
-                {
-                    var businessIdColumnCompare = BusinessIdColumnList[i].CompareTo(other.BusinessIdColumnList[i]);
-                    if (businessIdColumnCompare != 0)
-                    {
-                        return businessIdColumnCompare;
-                    }
-                }
-                throw new Exception("Inconsistency!");
+                return businessIdCompare;
             }
             for (var i=0; i<ColumnList.Count; i++)
             {
-                var columnCompare = ColumnList[i].CompareTo(other.ColumnList[i]);
+                var columnCompare = string.Compare(ColumnList[i], other.ColumnList[i], StringComparison.InvariantCulture);
                 if (columnCompare != 0)
                 {
                     return columnCompare;
@@ -45,7 +31,11 @@ namespace DatabaseComparer
             if (other == null) {
                 return false;
             }
-            // TODO: First check BusinessIdHashCode
+
+            if (BusinessId.GetHashCode() != other.BusinessId.GetHashCode())
+            {
+                return false;
+            }
             return GetHashCode().Equals(other.GetHashCode());
         }
         public override bool Equals(object other)
@@ -66,21 +56,24 @@ namespace DatabaseComparer
         }
         public override int GetHashCode()
         {
-           	unchecked
+            unchecked
             {
                 var hashCode = 13;
-                // TODO
-                // hashCode = (hashCode * 397) ^ ViewName.GetHashCode();
-                // hashCode = (hashCode * 397) ^ BusinessIdColumnList.GetHashCode();
-                // hashCode = (hashCode * 397) ^ ColumnList.GetHashCode();
+                // ReSharper disable once NonReadonlyMemberInGetHashCode
+                hashCode = (hashCode * 397) ^ BusinessId.GetHashCode();
+                // ReSharper disable once NonReadonlyMemberInGetHashCode
+                foreach (var column in ColumnList)
+                {
+                    hashCode = (hashCode * 397) ^ column?.GetHashCode() ?? 0;
+                }
                 return hashCode;
             }
         }
         public static bool operator ==(DbEntry lhs, DbEntry rhs)
         {
-            if (object.ReferenceEquals(lhs, null))
+            if (ReferenceEquals(lhs, null))
             {
-                return object.ReferenceEquals(rhs, null);
+                return ReferenceEquals(rhs, null);
             }
             return lhs.Equals(rhs);
         }
@@ -109,8 +102,7 @@ namespace DatabaseComparer
         {
             return new DbEntry
             {
-                ViewName = ViewName,
-                BusinessIdColumnList = BusinessIdColumnList?.Select(p => p).ToList(),
+                BusinessId = (DbBusinessId)BusinessId.Clone(),
                 ColumnList = ColumnList?.Select(p => p).ToList(),
             };
         }

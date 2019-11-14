@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DatabaseComparer;
 
-namespace DatabaseComparer
+namespace TestApp
 {
     public class MockSqlService : ISqlService
     {
-        private List<DbEntry> _dbEntryList;
+        private readonly List<DbEntry> _dbEntryList;
         public MockSqlService(List<DbEntry> dbEntryList)
         {
             _dbEntryList = dbEntryList;
         }
 
-        public IEnumerable<int> GetBusinessIds(string connectionString, DbView dbView)
+        public IEnumerable<DbBusinessId> GetBusinessIds(string connectionString, DbView dbView)
         {
-            return _dbEntryList.Select(e => e.BusinessIdHashCode);
+            return _dbEntryList.Select(e => e.BusinessId);
         }
 
         public IEnumerable<DbEntry> GetDbEntries(string connectionString, DbView dbView)

@@ -5,29 +5,27 @@ namespace DatabaseComparer
 {
     public class DbStateReference : IDbStateReference
     {
-        private DbView _dbView;
-        private DbState _dbState;
+        public DbView DbView { get; }
+        public DbState DbState { get; }
 
         public DbStateReference(DbView dbView, IEnumerable<DbEntry> dbEntries)
         {
-            _dbView = dbView;
+            DbView = dbView;
             var dbEntryList = dbEntries.ToList();
-            _dbState = new DbState
+            DbState = new DbState
             {
                 DbEntryList = dbEntryList
             };
         }
 
-        public DbView DbView { get; }
-
-        public IEnumerable<int> GetBusinessIds()
+        public IEnumerable<DbBusinessId> GetBusinessIds()
         {
-            return _dbState.DbEntryList.Select(e => e.BusinessIdHashCode);
+            return DbState.DbEntryList.Select(e => e.BusinessId);
         }
 
         public IEnumerable<DbEntry> GetDbEntries()
         {
-            return _dbState.DbEntryList;
+            return DbState.DbEntryList;
         }
     }
 }

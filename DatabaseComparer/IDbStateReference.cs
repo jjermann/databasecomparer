@@ -6,6 +6,6 @@ namespace DatabaseComparer
     {
         DbView DbView {get;}
         IEnumerable<DbEntry> GetDbEntries();
-        IEnumerable<int> GetBusinessIds();
+        IEnumerable<DbBusinessId> GetBusinessIds();
     }
 }

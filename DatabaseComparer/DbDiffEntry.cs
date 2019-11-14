@@ -7,8 +7,8 @@ namespace DatabaseComparer
         public DbEntry DbEntryBefore {get;set;}
         public DbEntry DbEntryAfter {get;set;}
 
-        public string ViewName => DbEntryBefore?.ViewName ?? DbEntryAfter?.ViewName;
-        public int BusinessIdHashCode => (DbEntryBefore?.BusinessIdHashCode ?? DbEntryAfter?.BusinessIdHashCode).Value;
+        public string ViewName => DbEntryBefore?.BusinessId?.ViewName ?? DbEntryAfter?.BusinessId?.ViewName;
+        public int BusinessIdHashCode => (DbEntryBefore?.BusinessId?.GetHashCode() ?? DbEntryAfter?.BusinessId?.GetHashCode()).Value;
         public DbDiffEntryType DiffEntryType 
         {
             get
@@ -125,6 +125,13 @@ namespace DatabaseComparer
                 DbEntryBefore = (DbEntry)DbEntryBefore?.Clone(),
                 DbEntryAfter = (DbEntry)DbEntryAfter?.Clone()
             };
+        }
+
+        public override string ToString()
+        {
+            var businessId = DbEntryBefore?.BusinessId ?? DbEntryAfter?.BusinessId;
+            var str = DiffEntryType + " " + businessId + " " + DbEntryBefore + "->";
+            return str;
         }
     }
 }

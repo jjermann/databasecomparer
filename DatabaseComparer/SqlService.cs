@@ -3,9 +3,10 @@ using System.Data.SqlClient;
 
 namespace DatabaseComparer
 {
+    // ReSharper disable once InconsistentNaming
     public class SqlService : ISqlService
     {
-        public IEnumerable<int> GetBusinessIds(string connectionString, DbView dbView)
+        public IEnumerable<DbBusinessId> GetBusinessIds(string connectionString, DbView dbView)
         {
             var query = dbView.GetBusinessIdSelectQuery();
             var businessColumnCount = dbView.BusinessIdColumnNameList.Count;
@@ -13,26 +14,31 @@ namespace DatabaseComparer
 
             var cnn = new SqlConnection(connectionString);
             cnn.Open();
-            var createViewCmd = new SqlCommand(createViewQuery, cnn);
-            createViewCmd.ExecuteNonQuery();
-            var cmd = new SqlCommand(query, cnn);
-            using (var dataReader = cmd.ExecuteReader())
+            var sqlTransaction = cnn.BeginTransaction();
+            try
             {
-                while (dataReader.Read())
+                var createViewCmd = new SqlCommand(createViewQuery, cnn, sqlTransaction);
+                createViewCmd.ExecuteNonQuery();
+                var cmd = new SqlCommand(query, cnn, sqlTransaction);
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    var dbEntry = new DbEntry
+                    while (dataReader.Read())
                     {
-                        BusinessIdColumnList = new List<string>(),
-                        ColumnList = new List<string>()
-                    };
-                    for (var i = 0; i < businessColumnCount; i++)
-                    {
-                        var businessColumnContent = dataReader.GetValue(i).ToString();
-                        dbEntry.BusinessIdColumnList.Add(businessColumnContent);
-                    }
+                        var businessIdColumnList = new List<string>();
+                        for (var i = 0; i < businessColumnCount; i++)
+                        {
+                            var businessColumnContent = dataReader.GetValue(i).ToString();
+                            businessIdColumnList.Add(businessColumnContent);
+                        }
 
-                    yield return dbEntry.BusinessIdHashCode;
+                        var businessId = new DbBusinessId(dbView.ViewName, businessIdColumnList.ToArray());
+                        yield return businessId;
+                    }
                 }
+            }
+            finally
+            {
+                sqlTransaction.Rollback();
             }
             cnn.Close();
         }
@@ -46,32 +52,43 @@ namespace DatabaseComparer
 
             var cnn = new SqlConnection(connectionString);
             cnn.Open();
-            var createViewCmd = new SqlCommand(createViewQuery, cnn);
-            createViewCmd.ExecuteNonQuery();
-            var cmd = new SqlCommand(query, cnn);
-            using (var dataReader = cmd.ExecuteReader())
+            var sqlTransaction = cnn.BeginTransaction();
+            try
             {
-                while (dataReader.Read())
+                var createViewCmd = new SqlCommand(createViewQuery, cnn, sqlTransaction);
+                createViewCmd.ExecuteNonQuery();
+                var cmd = new SqlCommand(query, cnn, sqlTransaction);
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    var dbEntry = new DbEntry
+                    while (dataReader.Read())
                     {
-                        BusinessIdColumnList = new List<string>(),
-                        ColumnList = new List<string>()
-                    };
-                    for (var i = 0; i < businessColumnCount; i++)
-                    {
-                        var businessColumnContent = dataReader.GetValue(i).ToString();
-                        dbEntry.BusinessIdColumnList.Add(businessColumnContent);
-                    }
-                    for (var i = businessColumnCount; i < businessColumnCount + columnCount; i++)
-                    {
-                        var columnContent = dataReader.GetValue(i).ToString();
-                        dbEntry.ColumnList.Add(columnContent);
-                    }
+                        var businessIdColumnList = new List<string>();
+                        for (var i = 0; i < businessColumnCount; i++)
+                        {
+                            var businessColumnContent = dataReader.GetValue(i).ToString();
+                            businessIdColumnList.Add(businessColumnContent);
+                        }
+                        var columnList = new List<string>();
+                        for (var i = businessColumnCount; i < businessColumnCount + columnCount; i++)
+                        {
+                            var columnContent = dataReader.GetValue(i).ToString();
+                            columnList.Add(columnContent);
+                        }
+                        var dbEntry = new DbEntry
+                        {
+                            BusinessId = new DbBusinessId(dbView.ViewName, businessIdColumnList.ToArray()),
+                            ColumnList = columnList
+                        };
 
-                    yield return dbEntry;
+                        yield return dbEntry;
+                    }
                 }
             }
+            finally
+            {
+                sqlTransaction.Rollback();
+            }
+
             cnn.Close();
         }
     }
