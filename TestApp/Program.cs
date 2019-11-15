@@ -13,7 +13,7 @@ namespace TestApp
         private static void Test()
         {
             var sqlService = new SimpleMockSqlService();
-            sqlService.Insert(SqlTestDataGenerator.GetTestDbEntryList0().ToArray());
+            sqlService.Insert(TestDataGenerator.GetTestDbEntryList0().ToArray());
             var stateEnumerable = sqlService.GetDbEntries();
             foreach (var entry in stateEnumerable)
             {

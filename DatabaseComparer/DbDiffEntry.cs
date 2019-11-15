@@ -38,7 +38,7 @@ namespace DatabaseComparer
             {
                 return businessIdCompare;
             }
-            var typeCompare = (int)DiffEntryType.CompareTo((int)other.DiffEntryType);
+            var typeCompare = ((int)DiffEntryType).CompareTo((int)(other.DiffEntryType));
             if (typeCompare != 0)
             {
                 return typeCompare;

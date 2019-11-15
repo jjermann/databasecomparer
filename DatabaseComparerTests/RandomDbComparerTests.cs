@@ -4,27 +4,20 @@ using Shouldly;
 
 namespace DatabaseComparerTests
 {
-    public class DbComparerTests
+    public class RandomDbComparerTests
     {
         [SetUp]
         public void Setup()
         {
         }
 
-        private static object[] _testDbStateTriple =
-        {
-            new object[]
-            {
-                TestDataGenerator.GetTestDbState0(),
-                TestDataGenerator.GetTestDbState1(),
-                TestDataGenerator.GetTestDbState2()
-            }
-        };
-
-        [TestCaseSource(nameof(_testDbStateTriple))]
-        public void Diff1ToDiff2ShouldBeState1ToState2Test(IDbStateReference dbState0, IDbStateReference dbState1, IDbStateReference dbState2)
+        [TestCase(10)]
+        public void RandomDiff1ToDiff2ShouldBeState1ToState2Test(int n)
         {
             var dbComparer = new DbComparer();
+            var dbState0 = TestDataGenerator.GetTestDbRandomState(n);
+            var dbState1 = TestDataGenerator.GetTestDbRandomState(n);
+            var dbState2 = TestDataGenerator.GetTestDbRandomState(n);
             var diff1 = dbComparer.GetDbDiff(dbState0, dbState1);
             var diff2 = dbComparer.GetDbDiff(dbState0, dbState2);
             var diff3 = dbComparer.GetDbDiff(dbState1, dbState2);

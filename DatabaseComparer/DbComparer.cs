@@ -177,7 +177,7 @@ namespace DatabaseComparer
             var delList2 = add1Ids.Except(add2Ids)
                 .Select(id => 
                 {
-                    var dbEntry = (DbEntry)(diff1.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryBefore.Clone());
+                    var dbEntry = (DbEntry)(diff1.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryAfter.Clone());
                     var diffEntry = new DbDiffEntry
                     {
                         DbEntryBefore = dbEntry

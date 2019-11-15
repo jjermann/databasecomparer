@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using DatabaseComparer;
 
 namespace DatabaseComparerTests
 {
-    public static class SqlTestDataGenerator
+    public static class TestDataGenerator
     {
         public const string TestDbViewName = "TestDbView";
         public const string TestDbTableName = "TestDbTable";
@@ -77,6 +79,62 @@ namespace DatabaseComparerTests
             return dbEntryList;
         }
 
+        private static List<DbEntry> GetTestDbEntryRandomList(int n, int idNum)
+        {
+            var columnNum = (int)Math.Floor(Math.Sqrt(n));
+            var idList = GetBusinessIdList(idNum);
+            var columnListList = GetColumnList(columnNum);
+            var rnd = new Random();
+            var dbEntryList = new List<DbEntry>();
+            while (idList.Any() && dbEntryList.Count < n)
+            {
+                var rndIdIndex = rnd.Next(idList.Count);
+                var businessId = idList[rndIdIndex];
+                idList.RemoveAt(rndIdIndex);
+                var rndIndex = rnd.Next(columnListList.Count);
+                var columnList = columnListList[rndIndex].ToList();
+                var dbEntry = new DbEntry
+                {
+                    BusinessId = businessId,
+                    ColumnList = columnList
+                };
+                dbEntryList.Add(dbEntry);
+            }
+            return dbEntryList;
+        }
+
+        private static List<DbBusinessId> GetBusinessIdList(int n)
+        {
+            var businessIdList = new List<DbBusinessId>();
+            var num = (int)Math.Floor(Math.Sqrt(n));
+            for (var i=0; i<num; i++)
+            {
+                for (var j=0; j<num && businessIdList.Count < n; j++)
+                {
+                    businessIdList.Add(new DbBusinessId(TestDbViewName, i.ToString(), j.ToString()));
+                }
+            }
+            return businessIdList;
+        }
+
+        private static List<List<string>> GetColumnList(int n)
+        {
+            var columnListList = new List<List<string>>();
+            var num = (int)Math.Floor(Math.Pow(n,1/3));
+            for (var i=0; i<num; i++)
+            {
+                for (var j=0; j<num; j++)
+                {
+                    for (var k=0; k<num && columnListList.Count < n ; k++)
+                    {
+                        var columnList = new List<string> {i.ToString(), j.ToString(), k.ToString()};
+                        columnListList.Add(columnList);
+                    }
+                }
+            }
+            return columnListList;
+        }
+
         public static DbView GetTestDbView()
         {
             return new DbView
@@ -90,5 +148,12 @@ namespace DatabaseComparerTests
         public static DbState GetTestDbState0() => new DbState(GetTestDbView(), GetTestDbEntryList0().ToArray());
         public static DbState GetTestDbState1() => new DbState(GetTestDbView(), GetTestDbEntryList1().ToArray());
         public static DbState GetTestDbState2() => new DbState(GetTestDbView(), GetTestDbEntryList2().ToArray());
+
+        public static DbState GetTestDbRandomState(int n)
+        {
+            var dbEntryList = GetTestDbEntryRandomList(n, 2*n);
+            var dbState = new DbState(GetTestDbView(), dbEntryList);
+            return dbState;
+        }
     }
 }
