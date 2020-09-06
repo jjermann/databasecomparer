@@ -215,7 +215,7 @@ namespace DatabaseComparer
                 var updateDiffEntry = GetUpdateDifference(e1,e2);
                 if (updateDiffEntry != null)
                 {
-                    updList1.Add(updateDiffEntry);
+                    updList3.Add(updateDiffEntry);
                 }
             }
             dbDiffEntryList.AddRange(updList1);

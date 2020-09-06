@@ -120,7 +120,7 @@ namespace DatabaseComparerTests
         private static List<List<string>> GetColumnList(int n)
         {
             var columnListList = new List<List<string>>();
-            var num = (int)Math.Floor(Math.Pow(n,1/3));
+            var num = (int)Math.Floor(Math.Pow(n,1.0/3));
             for (var i=0; i<num; i++)
             {
                 for (var j=0; j<num; j++)

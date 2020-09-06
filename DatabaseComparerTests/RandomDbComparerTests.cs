@@ -1,6 +1,6 @@
 using DatabaseComparer;
+using FluentAssertions;
 using NUnit.Framework;
-using Shouldly;
 
 namespace DatabaseComparerTests
 {
@@ -23,7 +23,7 @@ namespace DatabaseComparerTests
             var diff3 = dbComparer.GetDbDiff(dbState1, dbState2);
             var diffOfDiff = dbComparer.GetDbDiff(diff1, diff2);
 
-            diffOfDiff.ShouldBe(diff3);
+            diffOfDiff.Should().Be(diff3);
         }
     }
 }

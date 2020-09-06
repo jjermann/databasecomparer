@@ -21,7 +21,7 @@ namespace DatabaseComparer
             {
                 return false;
             }
-            if (DbDiffEntryList.Count != other.DbDiffEntryList.Count)
+            if (DbDiffEntryList?.Count != other.DbDiffEntryList?.Count)
             {
                 return false;
             }
@@ -48,8 +48,10 @@ namespace DatabaseComparer
            	unchecked
             {
                 var hashCode = 13;
+                // ReSharper disable once NonReadonlyMemberInGetHashCode
                 if (DbDiffEntryList != null)
                 {
+                    // ReSharper disable once NonReadonlyMemberInGetHashCode
                     foreach (var dbDiffEntry in DbDiffEntryList)
                     {
                         hashCode = (hashCode * 397) ^ dbDiffEntry?.GetHashCode() ?? 0;
@@ -60,9 +62,9 @@ namespace DatabaseComparer
         }
         public static bool operator ==(DbDiff lhs, DbDiff rhs)
         {
-            if (object.ReferenceEquals(lhs, null))
+            if (ReferenceEquals(lhs, null))
             {
-                return object.ReferenceEquals(rhs, null);
+                return ReferenceEquals(rhs, null);
             }
             return lhs.Equals(rhs);
         }

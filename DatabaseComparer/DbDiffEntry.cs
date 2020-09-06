@@ -1,5 +1,6 @@
 using System;
 
+// ReSharper disable NonReadonlyMemberInGetHashCode
 namespace DatabaseComparer
 {
     public class DbDiffEntry : ICloneable, IEquatable<DbDiffEntry>, IComparable<DbDiffEntry>
@@ -28,7 +29,7 @@ namespace DatabaseComparer
 
         public int CompareTo(DbDiffEntry other)
         {
-            var viewNameCompare = ViewName.CompareTo(other.ViewName);
+            var viewNameCompare = string.Compare(ViewName, other.ViewName, StringComparison.InvariantCulture);
             if (viewNameCompare != 0)
             {
                 return viewNameCompare;
