@@ -15,7 +15,7 @@ namespace DatabaseComparer
             BusinessIdColumnList = columnArray.ToList();
         }
 
-        public bool Equals(DbBusinessId other)
+        public bool Equals(DbBusinessId? other)
         {
             if (other == null)
             {
@@ -23,7 +23,7 @@ namespace DatabaseComparer
             }
             return GetHashCode().Equals(other.GetHashCode());
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -52,7 +52,7 @@ namespace DatabaseComparer
                 return hashCode;
             }
         }
-        public static bool operator ==(DbBusinessId lhs, DbBusinessId rhs)
+        public static bool operator ==(DbBusinessId? lhs, DbBusinessId? rhs)
         {
             if (ReferenceEquals(lhs, null))
             {
@@ -60,7 +60,7 @@ namespace DatabaseComparer
             }
             return lhs.Equals(rhs);
         }
-        public static bool operator !=(DbBusinessId lhs, DbBusinessId rhs)
+        public static bool operator !=(DbBusinessId? lhs, DbBusinessId? rhs)
         {
             return !(lhs == rhs);
         }
@@ -81,8 +81,14 @@ namespace DatabaseComparer
             return lhs.CompareTo(rhs) > 0;
         }
 
-        public int CompareTo(DbBusinessId other)
+        public int CompareTo(DbBusinessId? other)
         {
+            // TODO
+            if (other == null)
+            {
+                return 1;
+            }
+
             var viewNameCompare = string.Compare(ViewName, other.ViewName, StringComparison.InvariantCulture);
             if (viewNameCompare != 0)
             {

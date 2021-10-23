@@ -6,11 +6,16 @@ namespace DatabaseComparer
 {
     public class DbEntry : ICloneable, IEquatable<DbEntry>, IComparable<DbEntry>
     {
-        public DbBusinessId BusinessId {get;set;}
-        public List<string> ColumnList {get;set;}
+        public DbBusinessId BusinessId { get; set; } = null!;
+        public List<string> ColumnList { get; set; } = null!;
 
-        public int CompareTo(DbEntry other)
+        public int CompareTo(DbEntry? other)
         {
+            // TODO
+            if (other == null)
+            {
+                return 1;
+            }
             var businessIdCompare = BusinessId.CompareTo(other.BusinessId);
             if (businessIdCompare != 0)
             {
@@ -26,7 +31,7 @@ namespace DatabaseComparer
             }
             return 0;
         }
-        public bool Equals(DbEntry other)
+        public bool Equals(DbEntry? other)
         {
             if (other == null) {
                 return false;
@@ -38,7 +43,7 @@ namespace DatabaseComparer
             }
             return GetHashCode().Equals(other.GetHashCode());
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -69,7 +74,7 @@ namespace DatabaseComparer
                 return hashCode;
             }
         }
-        public static bool operator ==(DbEntry lhs, DbEntry rhs)
+        public static bool operator ==(DbEntry? lhs, DbEntry? rhs)
         {
             if (ReferenceEquals(lhs, null))
             {
@@ -77,7 +82,7 @@ namespace DatabaseComparer
             }
             return lhs.Equals(rhs);
         }
-        public static bool operator !=(DbEntry lhs, DbEntry rhs)
+        public static bool operator !=(DbEntry? lhs, DbEntry? rhs)
         {
             return !(lhs == rhs);
         }
@@ -103,7 +108,7 @@ namespace DatabaseComparer
             return new DbEntry
             {
                 BusinessId = (DbBusinessId)BusinessId.Clone(),
-                ColumnList = ColumnList?.Select(p => p).ToList(),
+                ColumnList = ColumnList.Select(p => p).ToList(),
             };
         }
 

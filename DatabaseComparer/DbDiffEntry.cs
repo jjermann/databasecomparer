@@ -5,11 +5,11 @@ namespace DatabaseComparer
 {
     public class DbDiffEntry : ICloneable, IEquatable<DbDiffEntry>, IComparable<DbDiffEntry>
     {
-        public DbEntry DbEntryBefore {get;set;}
-        public DbEntry DbEntryAfter {get;set;}
+        public DbEntry? DbEntryBefore {get;set;}
+        public DbEntry? DbEntryAfter {get;set;}
 
-        public string ViewName => DbEntryBefore?.BusinessId?.ViewName ?? DbEntryAfter?.BusinessId?.ViewName;
-        public DbBusinessId BusinessId => DbEntryBefore?.BusinessId ?? DbEntryAfter?.BusinessId;
+        public string ViewName => DbEntryBefore?.BusinessId?.ViewName ?? DbEntryAfter!.BusinessId!.ViewName;
+        public DbBusinessId BusinessId => DbEntryBefore?.BusinessId ?? DbEntryAfter!.BusinessId;
         public int GetBusinessIdHashCode() => BusinessId?.GetHashCode() ?? 0;
         public DbDiffEntryType DiffEntryType 
         {
@@ -27,8 +27,14 @@ namespace DatabaseComparer
             }
         }
 
-        public int CompareTo(DbDiffEntry other)
+        public int CompareTo(DbDiffEntry? other)
         {
+            // TODO
+            if (other == null)
+            {
+                return 1;
+            }
+
             var viewNameCompare = string.Compare(ViewName, other.ViewName, StringComparison.InvariantCulture);
             if (viewNameCompare != 0)
             {
@@ -62,7 +68,7 @@ namespace DatabaseComparer
             }
             return 0;
         }
-        public bool Equals(DbDiffEntry other)
+        public bool Equals(DbDiffEntry? other)
         {
             if (other == null) {
                 return false;
@@ -73,7 +79,7 @@ namespace DatabaseComparer
             }
             return GetHashCode().Equals(other.GetHashCode());
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -99,7 +105,7 @@ namespace DatabaseComparer
                 return hashCode;
             }
         }
-        public static bool operator ==(DbDiffEntry lhs, DbDiffEntry rhs)
+        public static bool operator ==(DbDiffEntry? lhs, DbDiffEntry? rhs)
         {
             if (object.ReferenceEquals(lhs, null))
             {
@@ -107,7 +113,7 @@ namespace DatabaseComparer
             }
             return lhs.Equals(rhs);
         }
-        public static bool operator !=(DbDiffEntry lhs, DbDiffEntry rhs)
+        public static bool operator !=(DbDiffEntry? lhs, DbDiffEntry? rhs)
         {
             return !(lhs == rhs);
         }
@@ -132,8 +138,8 @@ namespace DatabaseComparer
         {
             return new DbDiffEntry
             {
-                DbEntryBefore = (DbEntry)DbEntryBefore?.Clone(),
-                DbEntryAfter = (DbEntry)DbEntryAfter?.Clone()
+                DbEntryBefore = (DbEntry?)DbEntryBefore?.Clone(),
+                DbEntryAfter = (DbEntry?)DbEntryAfter?.Clone()
             };
         }
 
@@ -143,17 +149,17 @@ namespace DatabaseComparer
             var str = DiffEntryType + " " + businessId + " ";
             if (DiffEntryType == DbDiffEntryType.Add)
             {
-                str += string.Join(",", DbEntryAfter.ColumnList);
+                str += string.Join(",", DbEntryAfter!.ColumnList);
             }
             else if (DiffEntryType == DbDiffEntryType.Delete)
             {
-                str += string.Join(",", DbEntryBefore.ColumnList);
+                str += string.Join(",", DbEntryBefore!.ColumnList);
             }
             else if (DiffEntryType == DbDiffEntryType.Update)
             {
-                str += string.Join(",", DbEntryBefore.ColumnList);
+                str += string.Join(",", DbEntryBefore!.ColumnList);
                 str += " -> ";
-                str += string.Join(",", DbEntryAfter.ColumnList);
+                str += string.Join(",", DbEntryAfter!.ColumnList);
             }
             return str;
         }

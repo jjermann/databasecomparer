@@ -27,7 +27,7 @@ namespace DatabaseComparer
                         var businessIdColumnList = new List<string>();
                         for (var i = 0; i < businessColumnCount; i++)
                         {
-                            var businessColumnContent = dataReader.GetValue(i).ToString();
+                            var businessColumnContent = dataReader.GetValue(i).ToString()!;
                             businessIdColumnList.Add(businessColumnContent);
                         }
 
@@ -65,13 +65,13 @@ namespace DatabaseComparer
                         var businessIdColumnList = new List<string>();
                         for (var i = 0; i < businessColumnCount; i++)
                         {
-                            var businessColumnContent = dataReader.GetValue(i).ToString();
+                            var businessColumnContent = dataReader.GetValue(i).ToString()!;
                             businessIdColumnList.Add(businessColumnContent);
                         }
                         var columnList = new List<string>();
                         for (var i = businessColumnCount; i < businessColumnCount + columnCount; i++)
                         {
-                            var columnContent = dataReader.GetValue(i).ToString();
+                            var columnContent = dataReader.GetValue(i).ToString()!;
                             columnList.Add(columnContent);
                         }
                         var dbEntry = new DbEntry

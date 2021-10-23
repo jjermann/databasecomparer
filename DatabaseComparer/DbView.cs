@@ -5,9 +5,10 @@ namespace DatabaseComparer
 {
     public class DbView
     {
-        public DbBusinessId BusinessNameId {get;set;}
-        public string CreateViewQuery {get;set;}
-        public List<string> ColumnNameList {get;set;}
+        public string DbName { get; set; } = null!;
+        public DbBusinessId BusinessNameId {get;set;} = null!;
+        public string CreateViewQuery {get;set;} = null!;
+        public List<string> ColumnNameList {get;set;} = null!;
 
         public string ViewName => BusinessNameId.ViewName;
         public List<string> BusinessIdColumnNameList => BusinessNameId.BusinessIdColumnList;

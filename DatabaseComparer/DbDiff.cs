@@ -6,9 +6,9 @@ namespace DatabaseComparer
 {
     public class DbDiff : ICloneable, IEquatable<DbDiff>
     {
-        public List<DbDiffEntry> DbDiffEntryList {get;set;}
+        public List<DbDiffEntry> DbDiffEntryList { get; set; } = null!;
 
-        public bool Equals(DbDiff other)
+        public bool Equals(DbDiff? other)
         {
             if (other == null) {
                 return false;
@@ -27,7 +27,7 @@ namespace DatabaseComparer
             }
             return GetHashCode().Equals(other.GetHashCode());
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -60,7 +60,7 @@ namespace DatabaseComparer
                 return hashCode;
             }
         }
-        public static bool operator ==(DbDiff lhs, DbDiff rhs)
+        public static bool operator ==(DbDiff? lhs, DbDiff? rhs)
         {
             if (ReferenceEquals(lhs, null))
             {
@@ -68,7 +68,7 @@ namespace DatabaseComparer
             }
             return lhs.Equals(rhs);
         }
-        public static bool operator !=(DbDiff lhs, DbDiff rhs)
+        public static bool operator !=(DbDiff? lhs, DbDiff? rhs)
         {
             return !(lhs == rhs);
         }
@@ -77,7 +77,7 @@ namespace DatabaseComparer
         {
             return new DbDiff
             {
-                DbDiffEntryList = DbDiffEntryList?.Select(e => (DbDiffEntry)e?.Clone()).ToList()
+                DbDiffEntryList = DbDiffEntryList.Select(e => (DbDiffEntry)e.Clone()).ToList()
             };
         }
 

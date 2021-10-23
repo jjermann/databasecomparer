@@ -73,7 +73,7 @@ namespace DatabaseComparer
             };
         }
         
-        public DbDiff GetDbDiff(DbDiff diff1, DbDiff diff2)
+        public DbDiff? GetDbDiff(DbDiff diff1, DbDiff diff2)
         {
             var add1Ids = diff1.DbDiffEntryList
                 .Where(e => e.DiffEntryType == DbDiffEntryType.Add)
@@ -143,7 +143,7 @@ namespace DatabaseComparer
             var addList2 = del1Ids.Except(del2Ids).Except(upd2Ids)
                 .Select(id => 
                 {
-                    var dbEntry = (DbEntry)(diff1.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryBefore.Clone());
+                    var dbEntry = (DbEntry)(diff1.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryBefore!.Clone());
                     var diffEntry = new DbDiffEntry
                     {
                         DbEntryAfter = dbEntry
@@ -154,7 +154,7 @@ namespace DatabaseComparer
             var addList3 = (del1Ids.Except(del2Ids)).Intersect(upd2Ids)
                 .Select(id => 
                 {
-                    var dbEntry = (DbEntry)(diff2.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryAfter.Clone());
+                    var dbEntry = (DbEntry)(diff2.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryAfter!.Clone());
                     var diffEntry = new DbDiffEntry
                     {
                         DbEntryAfter = dbEntry
@@ -177,7 +177,7 @@ namespace DatabaseComparer
             var delList2 = add1Ids.Except(add2Ids)
                 .Select(id => 
                 {
-                    var dbEntry = (DbEntry)(diff1.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryAfter.Clone());
+                    var dbEntry = (DbEntry)(diff1.DbDiffEntryList.Single(e => e.GetBusinessIdHashCode() == id).DbEntryAfter!.Clone());
                     var diffEntry = new DbDiffEntry
                     {
                         DbEntryBefore = dbEntry
@@ -232,12 +232,12 @@ namespace DatabaseComparer
             return dbDiff;
         }
         // TODO
-        public DbDiff SquashDbDiffs(DbDiff[] diffArray) => null;
+        public DbDiff? SquashDbDiffs(DbDiff[] diffArray) => null;
 
         // This helper method assumes that both entries have the same BusinessId
         // and that they are of type (Add, Add) or (Update, Update).
         // The return value is the difference between the two DbDiffEntry and null if they are the same.
-        private DbDiffEntry GetUpdateDifference(DbDiffEntry e1, DbDiffEntry e2)
+        private DbDiffEntry? GetUpdateDifference(DbDiffEntry e1, DbDiffEntry e2)
         {
             var isAddAdd = e1.DiffEntryType == DbDiffEntryType.Add && e2.DiffEntryType == DbDiffEntryType.Add;
             var isUpdUpd = e1.DiffEntryType == DbDiffEntryType.Update && e2.DiffEntryType == DbDiffEntryType.Update;
@@ -245,7 +245,7 @@ namespace DatabaseComparer
             {
                 var entry1Result = e1.DbEntryAfter;
                 var entry2Result = e2.DbEntryAfter;
-                if (entry1Result.Equals(entry2Result))
+                if (entry1Result == entry2Result)
                 {
                     return null;
                 }

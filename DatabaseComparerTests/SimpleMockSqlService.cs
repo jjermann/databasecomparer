@@ -86,14 +86,14 @@ namespace DatabaseComparerTests
         {
             var insertArray = dbDiffArray
                 .Where(e => e.DiffEntryType == DbDiffEntryType.Add)
-                .Select(e => e.DbEntryAfter)
+                .Select(e => e.DbEntryAfter!)
                 .ToArray();
             var updateDictionary = dbDiffArray
                 .Where(e => e.DiffEntryType == DbDiffEntryType.Update)
-                .ToDictionary(e => e.DbEntryBefore.BusinessId, e => e.DbEntryAfter);
+                .ToDictionary(e => e.DbEntryBefore!.BusinessId, e => e.DbEntryAfter!);
             var deleteArray = dbDiffArray
                 .Where(e => e.DiffEntryType == DbDiffEntryType.Delete)
-                .Select(e => e.DbEntryBefore)
+                .Select(e => e.DbEntryBefore!)
                 .ToArray();
             var existingBusinessIdList = GetBusinessIds();
 
